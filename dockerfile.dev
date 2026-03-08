@@ -1,0 +1,19 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy prisma schema and generate client
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+RUN npx prisma generate
+
+# Source code is mounted as a volume in compose.yaml,
+# so no COPY of src/ is needed for dev mode.
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
